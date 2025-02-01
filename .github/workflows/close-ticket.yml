@@ -32,9 +32,13 @@ jobs:
           else
             echo "Kein Ticket gefunden für Diskussion: ${{ env.TITLE }}"
           fi
-
-      - name: Lock Discussion
+      - name: Lock Discussion via API
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+          GH_PAT: ${{ secrets.GH_PAT }}
+          DISCUSSION_ID: ${{ github.event.discussion.node_id }}
         run: |
-          gh discussion lock --repo ${{ github.repository }} --discussion ${{ github.event.discussion.node_id }}
+          curl -X POST -H "Authorization: Bearer $GH_PAT" \
+               -H "Accept: application/vnd.github.v3+json" \
+               https://api.github.com/graphql \
+               -d '{"query": "mutation { lockDiscussion(input: {discussionId: \"$DISCUSSION_ID\", lockReason: \"RESOLVED\"}) { clientMutationId } }"}'
+      
