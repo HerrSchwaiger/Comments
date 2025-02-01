@@ -15,23 +15,24 @@ jobs:
           repository: HerrSchwaiger/HerrSchwaiger.github.io
           token: ${{ secrets.GH_PAT }}
 
-      - name: Extract Discussion Title
-        id: get_title
-        run: echo "TITLE=$(echo '${{ github.event.discussion.title }}' | sed 's/ /-/g' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+      - name: Extract Discussion ID
+        id: get_ticket_id
+        run: echo "TICKET_ID=$(echo '${{ github.event.discussion.title }}' | grep -o '[0-9]\+$')" >> $GITHUB_ENV
 
-      - name: Update Ticket Markdown
+      - name: Find and Update Ticket Markdown
         run: |
-          FILE=$(find _posts/ -type f -name "*${{ env.TITLE }}.md")
+          FILE=$(find _posts/Tickets/ -type f -name "*-${{ env.TICKET_ID }}.md")
           if [ -f "$FILE" ]; then
             sed -i 's/open: true/open: false/' "$FILE"
             git config --global user.name "github-actions"
             git config --global user.email "actions@github.com"
             git add "$FILE"
-            git commit -m "🔒 Ticket ${{ env.TITLE }} geschlossen durch /close"
+            git commit -m "🔒 Ticket ${{ env.TICKET_ID }} geschlossen durch /close"
             git push
           else
-            echo "Kein Ticket gefunden für Diskussion: ${{ env.TITLE }}"
+            echo "❌ Kein Ticket für ID ${{ env.TICKET_ID }} gefunden"
           fi
+          
       - name: Lock Discussion via API
         env:
           GH_PAT: ${{ secrets.GH_PAT }}
