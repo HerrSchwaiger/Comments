@@ -18,6 +18,9 @@ jobs:
       - name: Extract Discussion ID
         id: get_ticket_id
         run: echo "TICKET_ID=$(echo '${{ github.event.discussion.title }}' | grep -o '[0-9]\+$')" >> $GITHUB_ENV
+      
+      - name: Debug Discussion ID
+        run: echo "Discussion ID: ${{ github.event.discussion.id }}"
 
       - name: Find and Update Ticket Markdown
         run: |
