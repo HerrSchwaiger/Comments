@@ -21,19 +21,19 @@ jobs:
           TICKET_ID=$(echo '${{ github.event.discussion.title }}' | sed -E 's#.*/([0-9]+)/?#\1#')
           echo "TICKET_ID=$TICKET_ID" >> $GITHUB_ENV
 
-      - name: Find and Update Ticket Markdown
-        run: |
-          FILE=$(find _posts/Tickets/ -type f -name "*-${{ env.TICKET_ID }}.md")
-          if [ -f "$FILE" ]; then
-            sed -i 's/open: true/open: false/' "$FILE"
-            git config --global user.name "github-actions"
-            git config --global user.email "actions@github.com"
-            git add "$FILE"
-            git commit -m "🔒 Ticket ${{ env.TICKET_ID }} geschlossen durch /close"
-            git push
-          else
-            echo "❌ Kein Ticket für ID ${{ env.TICKET_ID }} gefunden"
-          fi
+      # - name: Find and Update Ticket Markdown
+      #   run: |
+      #     FILE=$(find _posts/Tickets/ -type f -name "*-${{ env.TICKET_ID }}.md")
+      #     if [ -f "$FILE" ]; then
+      #       sed -i 's/open: true/open: false/' "$FILE"
+      #       git config --global user.name "github-actions"
+      #       git config --global user.email "actions@github.com"
+      #       git add "$FILE"
+      #       git commit -m "🔒 Ticket ${{ env.TICKET_ID }} geschlossen durch /close"
+      #       git push
+      #     else
+      #       echo "❌ Kein Ticket für ID ${{ env.TICKET_ID }} gefunden"
+      #     fi
 
       - name: Lock Discussion via REST API
         env:
@@ -41,5 +41,5 @@ jobs:
         run: |
           curl -X PUT -H "Authorization: Bearer $GH_PAT" \
                -H "Accept: application/vnd.github.v3+json" \
-               "https://api.github.com/repos/HerrSchwaiger/Comments/discussions/${{ github.event.discussion.node_id }}/lock" \
+               "https://api.github.com/repos/HerrSchwaiger/Comments/discussions/${{ github.event.discussion.id }}/lock" \
                -d '{"lock_reason": "resolved"}'
