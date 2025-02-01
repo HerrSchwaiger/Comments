@@ -18,7 +18,7 @@ jobs:
       - name: Extract Ticket ID
         id: get_ticket_id
         run: |
-          TICKET_ID=$(echo '${{ github.event.discussion.id }}' | sed -E 's#.*/([0-9]+)/?#\1#')
+          TICKET_ID=$(echo '${{ github.event.discussion.title }}' | sed -E 's#.*/([0-9]+)/?#\1#')
           echo "TICKET_ID=$TICKET_ID" >> $GITHUB_ENV
 
       - name: Find and Update Ticket Markdown
