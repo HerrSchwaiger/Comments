@@ -15,12 +15,11 @@ jobs:
           repository: HerrSchwaiger/HerrSchwaiger.github.io
           token: ${{ secrets.GH_PAT }}
 
-      - name: Extract Discussion ID
+      - name: Extract Ticket ID
         id: get_ticket_id
-        run: echo "TICKET_ID=$(echo '${{ github.event.discussion.title }}' | grep -o '[0-9]\+$')" >> $GITHUB_ENV
-      
-      - name: Debug Discussion ID
-        run: echo "${{ env.TICKET_ID }}"
+        run: |
+          TICKET_ID=$(echo '${{ github.event.discussion.id }}' | sed -E 's#.*/([0-9]+)/?#\1#')
+          echo "TICKET_ID=$TICKET_ID" >> $GITHUB_ENV
 
       - name: Find and Update Ticket Markdown
         run: |
