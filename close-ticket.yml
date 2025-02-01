@@ -1,0 +1,40 @@
+name: Close Ticket from GitHub Discussion
+
+on:
+  discussion_comment:
+    types: [created]
+
+jobs:
+  close_ticket:
+    runs-on: ubuntu-latest
+    if: contains(github.event.comment.body, '/close')
+    steps:
+      - name: Checkout Website Repository
+        uses: actions/checkout@v4
+        with:
+          repository: HerrSchwaiger/HerrSchwaiger.github.io
+          token: ${{ secrets.GH_PAT }}
+
+      - name: Extract Discussion Title
+        id: get_title
+        run: echo "TITLE=$(echo '${{ github.event.discussion.title }}' | sed 's/ /-/g' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+
+      - name: Update Ticket Markdown
+        run: |
+          FILE=$(find _posts/ -type f -name "*${{ env.TITLE }}.md")
+          if [ -f "$FILE" ]; then
+            sed -i 's/open: true/open: false/' "$FILE"
+            git config --global user.name "github-actions"
+            git config --global user.email "actions@github.com"
+            git add "$FILE"
+            git commit -m "🔒 Ticket ${{ env.TITLE }} geschlossen durch /close"
+            git push
+          else
+            echo "Kein Ticket gefunden für Diskussion: ${{ env.TITLE }}"
+          fi
+
+      - name: Lock Discussion
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+        run: |
+          gh discussion lock --repo ${{ github.repository }} --discussion ${{ github.event.discussion.node_id }}
