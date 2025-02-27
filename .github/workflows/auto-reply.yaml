@@ -16,10 +16,7 @@ jobs:
             const owner = context.repo.owner;
             const repo = context.repo.repo;
             
-            const reply = "Sehr geehrtes ByteConnect-Team,
-                            Vielen Dank für Ihre schnelle Nachricht. Mit diesen Ergebnissen können wir die Geschäftsleitung mit Sicherheit davon überzeugen auf Kündigungen zu verzichten.
-                            Danke und viele Grüße,
-                            BuchWurm Betriebsrat";
+            const reply = "Sehr geehrtes ByteConnect-Team, Vielen Dank für Ihre schnelle Nachricht. Mit diesen Ergebnissen können wir die Geschäftsleitung mit Sicherheit davon überzeugen auf Kündigungen zu verzichten. Danke und viele Grüße, BuchWurm Betriebsrat";
 
             // Warten Sie 60 Sekunden (1 Minute)
             await new Promise(resolve => setTimeout(resolve, 60000));
