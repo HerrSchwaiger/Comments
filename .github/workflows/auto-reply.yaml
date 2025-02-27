@@ -10,7 +10,7 @@ jobs:
       - name: Auto-reply to new discussions
         uses: actions/github-script@v6
         with:
-          github-token: ${{ secrets.GITHUB_BOT_TOKEN }}
+          github-token: ${{ secrets.GH_PAT }}
           script: |
             const discussion = context.payload.discussion;
             const owner = context.repo.owner;
