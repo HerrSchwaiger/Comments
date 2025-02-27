@@ -1,6 +1,6 @@
 name: Auto Reply to Discussions
 on:
-  discussion:
+  discussion_comment:
     types: [created]
 
 jobs:
