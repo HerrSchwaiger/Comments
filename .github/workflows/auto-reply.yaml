@@ -1,0 +1,33 @@
+name: Auto Reply to Discussions
+on:
+  discussion:
+    types: [created]
+
+jobs:
+  auto-reply:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Auto-reply to new discussions
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_BOT_TOKEN }}
+          script: |
+            const discussion = context.payload.discussion;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            
+            const reply = "Sehr geehrtes ByteConnect-Team,
+                            Vielen Dank für Ihre schnelle Nachricht. Mit diesen Ergebnissen können wir die Geschäftsleitung mit Sicherheit davon überzeugen auf Kündigungen zu verzichten.
+                            Danke und viele Grüße,
+                            BuchWurm Betriebsrat";
+
+            // Warten Sie 60 Sekunden (1 Minute)
+            await new Promise(resolve => setTimeout(resolve, 60000));
+
+            // Erstelle den Kommentar nach der Verzögerung
+            await github.rest.discussions.createDiscussionComment({
+              owner,
+              repo,
+              discussion_number: discussion.number,
+              body: reply
+            });
